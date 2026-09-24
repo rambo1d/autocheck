@@ -1,0 +1,26 @@
+name: HSE Morning Alarm Notification
+
+on:
+  schedule:
+    # 03:45 UTC = 06:45 MSK (каждое утро с понедельника по субботу)
+    - cron: '45 3 * * 1-6'
+  workflow_dispatch: # Позволяет запускать вручную кнопкой
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Run Morning Bot
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          CALENDAR_URL: ${{ secrets.CALENDAR_URL }}
+        run: node index.js
